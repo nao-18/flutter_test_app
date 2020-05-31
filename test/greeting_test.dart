@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttertestapp/greeting.dart';
+import 'package:fluttertestapp/main.dart';
 import 'package:mockito/mockito.dart';
 
 class MockGreeting extends Mock implements Greeting{}
@@ -26,6 +28,7 @@ void main() {
     expect(result, '名前を入力してください');
   });
 
+  //Mockテスト
   test('mockito', () async {
     // 2. モックのインスタンス化
     final greeting = MockGreeting();
@@ -36,4 +39,21 @@ void main() {
     var result = await greeting.slowGreeting();
     expect(result, 'こんばんは');
   });
+
+  //Widgetテスト
+  testWidgets('挨拶が表示されるテスト', (WidgetTester tester) async {
+    //widgetツリーの構築
+    await tester.pumpWidget(MyApp());
+    //初期値のテスト
+    expect(find.text('名前を入力してください'), findsOneWidget);
+    //テキストフィールドに名前を入力する
+    await tester.enterText(find.byKey(const Key('name text field')), '太郎');
+    //『挨拶をする』ボタンをタップする
+    await tester.tap(find.text('挨拶をする'));
+    //Widgetツリーの更新待ち
+    await tester.pump();
+    //表示された挨拶の文言をチェックする
+    expect(find.text('こんにちは 太郎 さん'), findsOneWidget);
+  });
+
 }

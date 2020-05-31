@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttertestapp/greeting.dart';
+import 'package:mockito/mockito.dart';
+
+class MockGreeting extends Mock implements Greeting{}
 
 void main() {
   //正常時
@@ -21,5 +24,16 @@ void main() {
     final greeting = Greeting();
     var result = greeting.greeting('');
     expect(result, '名前を入力してください');
+  });
+
+  test('mockito', () async {
+    // 2. モックのインスタンス化
+    final greeting = MockGreeting();
+
+    // 3. モックの実装
+    when(greeting.slowGreeting()).thenAnswer((_) => Future.value("こんばんは"));
+
+    var result = await greeting.slowGreeting();
+    expect(result, 'こんばんは');
   });
 }
